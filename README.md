@@ -12,19 +12,21 @@ ohjelman käytöstä vedonlyöntitarkoituksiin. Käytä ohjelmaa omalla vastuull
 
 1. Ohjelma näyttää ASCII-logon käynnistyessään.
 2. Ohjelma kysyy käyttäjältä, kuinka monta riviä halutaan luoda (vähintään 10).
-3. Jokaiselle 13 kohteelle kysytään painotukset (kotivoitto, tasapeli, vierasvoitto).
-   - Käyttäjä voi syöttää painotukset manuaalisesti (esim. 70,20,10).
+3. Jokaiselle 13 kohteelle kysytään painotukset (kotivoitto, tasapeli, vierasvoitto) 10:n tarkkuudella.
+   - Käyttäjä voi syöttää painotukset manuaalisesti (esim. 80,10,10).
    - Painamalla Enter-näppäintä ohjelma arpoo painotukset automaattisesti.
 4. Ohjelma luo pyydetyn määrän uniikkeja rivejä annettujen painotusten mukaisesti.
 5. Luodut rivit tulostetaan näytölle.
+6. Ohjelma näyttää yhteenvedon luotujen rivien jakaumasta verrattuna annettuihin painotuksiin.
 
 ## Ominaisuudet
 
-- Varmistaa, että painotusten summa on aina 100%.
-- Tarjoaa mahdollisuuden korjata virheelliset painotukset automaattisesti.
-- Arpoo painotukset automaattisesti, jos käyttäjä ei syötä niitä.
+- Varmistaa, että painotukset ovat aina 10:n tarkkuudella ja niiden summa on 100%.
+- Luo rivit suoraan painotusten mukaisesti (esim. 80,10,10 tarkoittaa, että 10 riviä kohden on 8 kpl 1, 1 kpl x ja 1 kpl 2).
+- Arpoo painotukset automaattisesti 10:n tarkkuudella, jos käyttäjä ei syötä niitä.
 - Luo vain uniikkeja rivejä.
 - Ilmoittaa, jos kaikkia pyydettyjä uniikkeja rivejä ei voida luoda.
+- Näyttää yhteenvedon luotujen rivien jakaumasta.
 
 ## Käyttö
 
@@ -39,4 +41,4 @@ ohjelman käytöstä vedonlyöntitarkoituksiin. Käytä ohjelmaa omalla vastuull
 
 Tämä ohjelma on julkaistu MIT-lisenssillä. Katso tarkemmat tiedot [LICENSE](LICENSE) tiedostosta.
 
-Tämä ohjelma on suunniteltu helpottamaan vakioveikkausrivien luomista ja tarjoamaan joustavan tavan määritellä todennäköisyyksiä eri tuloksille.
+Tämä ohjelma on suunniteltu helpottamaan vakioveikkausrivien luomista ja tarjoamaan tarkan tavan määritellä todennäköisyyksiä eri tuloksille.

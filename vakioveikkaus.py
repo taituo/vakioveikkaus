@@ -3,7 +3,7 @@ Vakioveikkausrivien Generaattori
 
 MIT License
 
-Copyright (c) 2023 [Tekijän nimi]
+Copyright (c) 2024 Tuomas Taini
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -57,15 +57,16 @@ def kysy_rivien_maara():
             print("Syötä kelvollinen numero.")
 
 def arvo_painotukset():
-    p = [random.randint(1, 98) for _ in range(3)]
-    summa = sum(p)
-    return [round(x * 100 / summa) for x in p]
+    p = [0, 0, 0]
+    while sum(p) != 100:
+        p = [random.randint(0, 10) * 10 for _ in range(3)]
+    return p
 
 def kysy_painotukset():
     painotukset = []
     for i in range(13):
         while True:
-            syote = input(f"Anna kohteen {i+1} painotukset (esim. 70,20,10) tai paina Enter arpoaksesi: ")
+            syote = input(f"Anna kohteen {i+1} painotukset 10:n tarkkuudella (esim. 80,10,10) tai paina Enter arpoaksesi: ")
             if syote == "":
                 p = arvo_painotukset()
                 print(f"Arvotut painotukset: {p[0]},{p[1]},{p[2]}")
@@ -73,29 +74,21 @@ def kysy_painotukset():
                 break
             try:
                 p = [int(x) for x in syote.split(',')]
-                if len(p) == 3:
-                    summa = sum(p)
-                    if summa == 100:
-                        painotukset.append(p)
-                        break
-                    else:
-                        print(f"Virheellinen syöte. Summa on {summa}, pitäisi olla 100.")
-                        korjaus = input("Haluatko korjata automaattisesti? (k/e): ")
-                        if korjaus.lower() == 'k':
-                            kerroin = 100 / summa
-                            p = [round(x * kerroin) for x in p]
-                            p[-1] = 100 - sum(p[:-1])  # Varmistetaan, että summa on tasan 100
-                            print(f"Korjatut painotukset: {p[0]},{p[1]},{p[2]}")
-                            painotukset.append(p)
-                            break
+                if len(p) == 3 and all(x % 10 == 0 for x in p) and sum(p) == 100:
+                    painotukset.append(p)
+                    break
                 else:
-                    print("Virheellinen syöte. Anna kolme lukua pilkuilla erotettuna.")
+                    print("Virheellinen syöte. Anna kolme lukua 10:n tarkkuudella, joiden summa on 100.")
             except ValueError:
-                print("Virheellinen syöte. Käytä muotoa: 70,20,10")
+                print("Virheellinen syöte. Käytä muotoa: 80,10,10")
     return painotukset
 
 def luo_rivi(painotukset):
-    return [random.choices(['1', 'x', '2'], weights=p)[0] for p in painotukset]
+    rivi = []
+    for p in painotukset:
+        valinnat = ['1'] * (p[0] // 10) + ['x'] * (p[1] // 10) + ['2'] * (p[2] // 10)
+        rivi.append(random.choice(valinnat))
+    return rivi
 
 def main():
     rivien_maara = kysy_rivien_maara()
@@ -117,6 +110,12 @@ def main():
     print("\nLuodut rivit:")
     for i, rivi in enumerate(rivit, 1):
         print(f"Rivi {i}: {''.join(rivi)}")
+
+    # Tulosta yhteenveto
+    print("\nYhteenveto:")
+    for i, p in enumerate(painotukset):
+        rivit_lista = [rivi[i] for rivi in rivit]
+        print(f"Kohde {i+1}: 1: {rivit_lista.count('1')}, x: {rivit_lista.count('x')}, 2: {rivit_lista.count('2')} (Painotus: {p[0]},{p[1]},{p[2]})")
 
 if __name__ == "__main__":
     main()
