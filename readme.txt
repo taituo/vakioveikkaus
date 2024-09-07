@@ -1,0 +1,14 @@
+- tehdään ohjelma joka tekee vakioveikkausrivejä
+- 1 kotivoitto
+- x tasapeli
+- 2 vierasvoitto
+- tee minulle hajarivejä (ei systeemi)
+- kysy kuinka monta riviä haluat
+- kysy 13 kohteen painotukset
+- promptaa kohde 1: 
+- annan painotukset näin 70,20,10
+- kysy loput 12 kohteesta painotukset
+- tee minulle kuinka monta riviä pyysin
+- niin että painoitukset toteutuvat
+- tulosta rivit ruudulle
+
