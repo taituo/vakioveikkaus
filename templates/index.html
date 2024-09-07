@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>{% raw %}{{ title }}{% endraw %}</h1>
+        
+        <div class="container">
+            <div class="input-section">
+                <div>
+                    <label for="maara">Rivien määrä:</label>
+                    <input type="number" id="maara" v-model.number="maara" min="10">
+                </div>
+                
+                <div class="kohde-grid">
+                    <div v-for="(painotus, index) in painotukset" :key="index" class="kohde">
+                        <span class="kohde-numero">{% raw %}{{ index + 1 }}{% endraw %}</span>
+                        <input type="number" v-model.number="painotus[0]" placeholder="1">
+                        <input type="number" v-model.number="painotus[1]" placeholder="X">
+                        <input type="number" v-model.number="painotus[2]" placeholder="2">
+                        <button @click="arvoPainotus(index)">Arvo</button>
+                    </div>
+                </div>
+                
+                <button @click="generoiRivit" class="generoi-button">Generoi rivit</button>
+            </div>
+            
+            <div class="results-section" v-if="rivit.length">
+                <h2>Generoidut rivit:</h2>
+                <ul class="rivit-list">
+                    <li v-for="(rivi, index) in rivit" :key="index">{% raw %}{{ rivi.join(' ') }}{% endraw %}</li>
+                </ul>
+                
+                <h2>Jakauma:</h2>
+                <table>
+                    <tr>
+                        <th>Kohde</th>
+                        <th>1</th>
+                        <th>X</th>
+                        <th>2</th>
+                    </tr>
+                    <tr v-for="kohde in jakauma" :key="kohde.kohde">
+                        <td>{% raw %}{{ kohde.kohde }}{% endraw %}</td>
+                        <td>{% raw %}{{ kohde['1'] }}{% endraw %}</td>
+                        <td>{% raw %}{{ kohde['X'] }}{% endraw %}</td>
+                        <td>{% raw %}{{ kohde['2'] }}{% endraw %}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                maara: 10,
+                painotukset: Array(13).fill().map(() => [33, 34, 33]),
+                rivit: [],
+                jakauma: []
+            },
+            methods: {
+                arvoPainotus(index) {
+                    const a = Math.floor(Math.random() * 10) * 10;
+                    const b = Math.floor(Math.random() * (10 - a / 10)) * 10;
+                    const c = 100 - a - b;
+                    this.painotukset[index] = [a, b, c];
+                },
+                generoiRivit() {
+                    axios.post('/generoi', {
+                        maara: this.maara,
+                        painotukset: this.painotukset
+                    })
+                    .then(response => {
+                        this.rivit = response.data.rivit;
+                        this.jakauma = response.data.jakauma;
+                    })
+                    .catch(error => {
+                        console.error('Virhe:', error);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

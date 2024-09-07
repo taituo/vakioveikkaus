@@ -30,7 +30,7 @@ ohjelman käytöstä vedonlyöntitarkoituksiin. Käytä ohjelmaa omalla vastuull
 
 import random
 
-ASCII_LOGO = """
+ASCII_LOGO = r"""
                __   .__                   .__ __    __                         
 ___  _______  |  | _|__| _______  __ ____ |__|  | _|  | _______   __ __  ______
 \  \/ /\__  \ |  |/ /  |/  _ \  \/ // __ \|  |  |/ /  |/ /\__  \ |  |  \/  ___/
@@ -83,29 +83,36 @@ def kysy_painotukset():
                 print("Virheellinen syöte. Käytä muotoa: 80,10,10")
     return painotukset
 
-def luo_rivi(painotukset):
-    rivi = []
-    for p in painotukset:
-        valinnat = ['1'] * (p[0] // 10) + ['x'] * (p[1] // 10) + ['2'] * (p[2] // 10)
-        rivi.append(random.choice(valinnat))
-    return rivi
+def luo_rivit(maara, painotukset):
+    rivit = set()
+    while len(rivit) < maara:
+        rivi = tuple(random.choices(['1', 'X', '2'], weights=painot)[0] for painot in painotukset)
+        rivit.add(rivi)
+    return list(rivit)
+
+def laske_jakauma(rivit):
+    jakauma = {i: {'1': 0, 'X': 0, '2': 0} for i in range(13)}
+    for rivi in rivit:
+        for i, tulos in enumerate(rivi):
+            jakauma[i][tulos] += 1
+    return jakauma
+
+def muotoile_jakauma(jakauma, maara):
+    return [{
+        'kohde': i + 1,
+        '1': f"{j['1'] / maara * 100:.1f}%",
+        'X': f"{j['X'] / maara * 100:.1f}%",
+        '2': f"{j['2'] / maara * 100:.1f}%"
+    } for i, j in jakauma.items()]
 
 def main():
     rivien_maara = kysy_rivien_maara()
     painotukset = kysy_painotukset()
     
-    rivit = set()
-    yritykset = 0
-    max_yritykset = rivien_maara * 10  # Asetetaan yläraja yrityksille
-
-    while len(rivit) < rivien_maara and yritykset < max_yritykset:
-        uusi_rivi = tuple(luo_rivi(painotukset))
-        if uusi_rivi not in rivit:
-            rivit.add(uusi_rivi)
-        yritykset += 1
-
-    if len(rivit) < rivien_maara:
-        print(f"\nVaroitus: Pystyttiin luomaan vain {len(rivit)} uniikkia riviä {rivien_maara} pyydetyn sijaan.")
+    rivit = luo_rivit(rivien_maara, painotukset)
+    
+    jakauma = laske_jakauma(rivit)
+    muotoiltu_jakauma = muotoile_jakauma(jakauma, rivien_maara)
     
     print("\nLuodut rivit:")
     for i, rivi in enumerate(rivit, 1):
@@ -113,9 +120,8 @@ def main():
 
     # Tulosta yhteenveto
     print("\nYhteenveto:")
-    for i, p in enumerate(painotukset):
-        rivit_lista = [rivi[i] for rivi in rivit]
-        print(f"Kohde {i+1}: 1: {rivit_lista.count('1')}, x: {rivit_lista.count('x')}, 2: {rivit_lista.count('2')} (Painotus: {p[0]},{p[1]},{p[2]})")
+    for i, j in enumerate(muotoiltu_jakauma, 1):
+        print(f"Kohde {i}: 1: {j['1']}, x: {j['X']}, 2: {j['2']}")
 
 if __name__ == "__main__":
     main()
